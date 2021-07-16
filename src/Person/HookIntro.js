@@ -1,5 +1,7 @@
 import React,{useState} from 'react';
-import Person from '../Person/Person'
+import Person from '../Person/Person';
+import Radium from 'radium';
+
 const HookIntro = (props) => {
 	const [personSt,updatePersonSt] = useState({
 		persons: [
@@ -32,4 +34,4 @@ const HookIntro = (props) => {
 	)
 }
 
-export default HookIntro;
+export default Radium(HookIntro);

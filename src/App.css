@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background-color: rgb(30, 27, 32);
+  color: aliceblue;
 }
 
 .App-logo {
@@ -23,6 +25,20 @@
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bold {
+  font-weight: bold;
+}
+.aqua {
+  background-color: aquamarine;
+}
+.red {
+  background-color: red;
 }
