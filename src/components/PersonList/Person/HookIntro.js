@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import Person from '../Person/Person';
+import Person from './components/PersonList/Person/Person';
 import Radium from 'radium';
 
 const HookIntro = (props) => {

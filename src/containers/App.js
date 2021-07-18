@@ -1,26 +1,28 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
-import './App.css';
+import classes from './App.css';
 // import Radium, {StyleRoot} from 'radium';
-import styled from 'styled-components';
-import Person from './Person/Person';
-import HookIntro from './Person/HookIntro';
-import './Person/Person.css';
-import Radium from 'radium';
+// import styled from 'styled-components';
+import Person from '../components/PersonList/Person/Person';
+// import HookIntro from './Person/HookIntro';
+// import './Person/Person.css';
+// import Radium from 'radium';
+import ErrorBoundary from '../ErrorBoundary'
 
-const StyledButton = styled.button`
-  background-color: ${props => props.colorStyleCondition ? 'red' : 'green'};
-  font: inherit;
-  border: 1px solid blue;
-  padding: 5px 10px;
-  borderRadius: 10px;
-  cursor: pointer;
 
-  &:hover {
-    background-color : black;
-    color: white;
-  }
-`;
+// const StyledButton = styled.button`
+//   background-color: ${props => props.colorStyleCondition ? 'red' : 'green'};
+//   font: inherit;
+//   border: 1px solid blue;
+//   padding: 5px 10px;
+//   borderRadius: 10px;
+//   cursor: pointer;
+
+//   &:hover {
+//     background-color : black;
+//     color: white;
+//   }
+// `;
 
 
 class App extends Component {
@@ -76,7 +78,10 @@ class App extends Component {
     //   backgroundColor: "green"
     // }
     
-    
+    const customStyle = {
+      padding: "10px",
+      backgroundColor: "blue"
+    }
     
     
     // instead we used StyledButton styled component
@@ -91,21 +96,21 @@ class App extends Component {
     //     backgroundColor : 'blue'
     //   }
     // }
-
+    
     let conditionallyRender = null;
 
     if(this.state.shouldRenderConditionally){
       conditionallyRender = (
         <div>
         {this.state.persons.map((person, index) => {
-          return <Person 
+          return <ErrorBoundary key = {person.id}><Person 
                     deleteOnClick = {this.deleteComponentHandler.bind(this,index)} // also below line can be used
                     // click = {() => this.deleteComponentHandler(index)}
                     name = {person.name} 
                     age = {person.age}
-                    key = {person.id}
+                    // key = {person.id} // moved this to ErrorBoundary if used
                     changeName = {(event) => this.realtimeNameChangeHandler(event, person.id)}
-                    />
+                    /></ErrorBoundary>
         })}
           <Person>This is efficient condetional render process but not dynamic which are the previous three components</Person>
         </div>
@@ -122,14 +127,15 @@ class App extends Component {
       
 
     } 
+    let test = "padding: 10px"
 
     let btnClass = [];
     
     if(this.state.persons.length < 3){
-      btnClass.push("red");
+      btnClass.push(classes.Red);
     }
     if(this.state.persons.length < 2){
-      btnClass.push("bold")
+      btnClass.push(classes.Bold)
     }
 
     // ***********************************
@@ -141,7 +147,7 @@ class App extends Component {
 
     return (
   //   <StyleRoot> 
-        <div className="App">
+        <div className={classes.App}>
         {/*<HookIntro name="from hook's person"/> 
         <h1>Hello !</h1>
         <button onClick={this.switchNameHandler.bind(this,"nameByBindOnHandlerParameter")}>Switch Name</button>
@@ -168,21 +174,25 @@ class App extends Component {
         <Person 
         name={this.state.persons[2].name} 
         age ={this.state.persons[2].age}/>*/}
-        
-        <StyledButton 
+        {/*<StyledButton*/}
+        <button 
             // style = {customStyle }
-            colorStyleCondition = {this.state.shouldRenderConditionally}
+            className = {classes.Btn}
+            // colorStyleCondition = {this.state.shouldRenderConditionally}
             key = "key-2"
             onClick={this.conditionallyRenderHandler}>
               Render Something Conditionally
-        </StyledButton> 
+        </button>      
+        {/*</StyledButton>  */}      
+        
 
           {this.state.shouldRenderConditionally ? <div>
             <Person >This portion rendered conditionally but not clean</Person>
           </div>: null }
 
           <button 
-              className={btnClass.join(" ")}
+              className = {btnClass.join(" ")}
+              // className="red"
               // style = {customStyle }
               // key = "key-3"
               onClick={this.conditionallyRenderHandler}>
