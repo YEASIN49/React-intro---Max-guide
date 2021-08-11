@@ -6,6 +6,11 @@
   margin: 15px auto;
   box-shadow: -5px 5px 6px #ccc;
 }
+*:focus {
+  background-color: seagreen;
+  color: aliceblue;
+  font-weight: bold;
+}
 @media (min-width: 550px) {
   .Person {
     width: 500px;

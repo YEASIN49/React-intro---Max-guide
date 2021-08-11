@@ -52,7 +52,7 @@
   cursor: pointer;
 }
 
-.btn:hover {
+.Btn:hover {
   background-color: black;
   color: white;
 }

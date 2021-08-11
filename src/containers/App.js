@@ -8,6 +8,10 @@ import Person from '../components/PersonList/Person/Person';
 // import './Person/Person.css';
 // import Radium from 'radium';
 import ErrorBoundary from '../ErrorBoundary'
+import PersonList from '../components/PersonList/PersonList';
+import Cockpit from '../components/Cockpit/Cockpit'
+import WithClass from '../hoc/WithClass';
+import AuthContext from '../context/auth-context'
 
 
 // const StyledButton = styled.button`
@@ -33,7 +37,9 @@ class App extends Component {
       {id : "abc123", name: "newMin", age:37}
     ],
     otherState: "random text",
-    shouldRenderConditionally : false
+    shouldRenderConditionally : false,
+    testCounter : 0,
+    authenticated: false
   }
 
   realtimeNameChangeHandler = (event, id) => {
@@ -45,7 +51,12 @@ class App extends Component {
     const updatePreviousToNewPersons = [...this.state.persons];
     updatePreviousToNewPersons[personIndex] = newPerson;
     
-    this.setState({persons: updatePreviousToNewPersons})
+    this.setState((prevState, props) => { // if update depands on previous state, MUST* use this functional setState approach
+      return {
+        persons: updatePreviousToNewPersons,
+        testCounter: prevState.testCounter + 1
+      }
+    })
 
   }
   conditionallyRenderHandler = (event) => {
@@ -72,6 +83,11 @@ class App extends Component {
       {name: "minByHandler", age:41}
     ]})
   }
+
+  loginHandler = () => {
+    this.setState({authenticated: true});
+  }
+
   render() {
 
     // const newStyle = {
@@ -102,17 +118,35 @@ class App extends Component {
     if(this.state.shouldRenderConditionally){
       conditionallyRender = (
         <div>
+        <PersonList 
+          persons = {this.state.persons}
+          isAuthenticated={this.state.authenticated}
+          nameChangeToPersonList = {this.realtimeNameChangeHandler}
+          clickToDeleteViaPersonList = {this.deleteComponentHandler}
+        />
+        
+
+        
+        {/* this portion moved into PersonList component
         {this.state.persons.map((person, index) => {
-          return <ErrorBoundary key = {person.id}><Person 
+          // return <ErrorBoundary key = {person.id}>
+          return <Person 
                     deleteOnClick = {this.deleteComponentHandler.bind(this,index)} // also below line can be used
                     // click = {() => this.deleteComponentHandler(index)}
                     name = {person.name} 
                     age = {person.age}
-                    // key = {person.id} // moved this to ErrorBoundary if used
+                    key = {person.id} // moved this to ErrorBoundary if used
                     changeName = {(event) => this.realtimeNameChangeHandler(event, person.id)}
-                    /></ErrorBoundary>
-        })}
-          <Person>This is efficient condetional render process but not dynamic which are the previous three components</Person>
+                    />
+                    {/*</ErrorBoundary> *//*}
+        })
+      }
+        */}
+        
+        {/******************************************************
+          ********************************************************/}
+
+          {/*<Person>This is efficient condetional render process but not dynamic which are the previous three components</Person>*/}
         </div>
       );
       
@@ -127,16 +161,17 @@ class App extends Component {
       
 
     } 
-    let test = "padding: 10px"
+    // let test = "padding: 10px"
 
-    let btnClass = [];
+    //Below code shofted to cockpit components
+    // let btnClass = [];
     
-    if(this.state.persons.length < 3){
-      btnClass.push(classes.Red);
-    }
-    if(this.state.persons.length < 2){
-      btnClass.push(classes.Bold)
-    }
+    // if(this.state.persons.length < 3){
+    //   btnClass.push(classes.Red);
+    // }
+    // if(this.state.persons.length < 2){
+    //   btnClass.push(classes.Bold)
+    // }
 
     // ***********************************
     //
@@ -147,7 +182,7 @@ class App extends Component {
 
     return (
   //   <StyleRoot> 
-        <div className={classes.App}>
+        <WithClass personClass={classes.App}>
         {/*<HookIntro name="from hook's person"/> 
         <h1>Hello !</h1>
         <button onClick={this.switchNameHandler.bind(this,"nameByBindOnHandlerParameter")}>Switch Name</button>
@@ -175,33 +210,62 @@ class App extends Component {
         name={this.state.persons[2].name} 
         age ={this.state.persons[2].age}/>*/}
         {/*<StyledButton*/}
-        <button 
+
+          {/******************************************************
+          ********************************************************/}
+
+       {/* <button 
             // style = {customStyle }
             className = {classes.Btn}
             // colorStyleCondition = {this.state.shouldRenderConditionally}
             key = "key-2"
             onClick={this.conditionallyRenderHandler}>
               Render Something Conditionally
-        </button>      
+       </button>      */}
         {/*</StyledButton>  */}      
         
 
-          {this.state.shouldRenderConditionally ? <div>
+         {/* {this.state.shouldRenderConditionally ? <div>
             <Person >This portion rendered conditionally but not clean</Person>
-          </div>: null }
+         </div>: null } */}
 
-          <button 
+          {/******************************************************
+          ********************************************************/}
+
+          {/*<button 
               className = {btnClass.join(" ")}
               // className="red"
               // style = {customStyle }
               // key = "key-3"
               onClick={this.conditionallyRenderHandler}>
                 Render Conditionally with efficiancy and clean code
-            </button>
-          <div><h2>below this portion is created with efficiancy and clean code</h2></div>
-          <h4>{conditionallyRender}</h4>
-        </div>
-//    </StyleRoot> 
+          </button>*/}
+          <h2>Counter : {this.state.testCounter}</h2>
+          
+          <AuthContext.Provider value={{
+            authenticated: this.state.authenticated,
+            logIn: this.loginHandler
+          }}>
+            <Cockpit 
+              appTitle = {this.props.appTitle}
+              persons={this.state.persons} 
+              // login={this.loginHandler}
+              conditionallyRenderHandlerViaCockpit = {this.conditionallyRenderHandler}
+            />
+            <div>
+              <h2>below this portion is created with efficiancy and clean code</h2>
+            </div>
+
+
+            <h4>{conditionallyRender}</h4>
+          </AuthContext.Provider>  
+
+            {/******************************************************
+          ********************************************************/}
+
+        </WithClass>  
+          
+     // </StyleRoot> 
     );
   } 
 }
